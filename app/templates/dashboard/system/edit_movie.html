@@ -1,0 +1,131 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h1>Movie Form</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            {{ form.title(class="form-control") }}
+            {% if form.title.errors %}
+                <ul class="errors">
+                    {% for error in form.title.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="genres" class="form-label">Genres</label>
+            {{ form.genres(class="form-control") }}
+            {% if form.genres.errors %}
+                <ul class="errors">
+                    {% for error in form.genres.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            {{ form.description(class="form-control") }}
+            {% if form.description.errors %}
+                <ul class="errors">
+                    {% for error in form.description.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="image_url" class="form-label">Image URL</label>
+            {{ form.image_url(class="form-control") }}
+            {% if form.image_url.errors %}
+                <ul class="errors">
+                    {% for error in form.image_url.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            {{ form.price(class="form-control") }}
+            {% if form.price.errors %}
+                <ul class="errors">
+                    {% for error in form.price.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="seat_rows" class="form-label">Seat Rows</label>
+            {{ form.seat_rows(class="form-control") }}
+            {% if form.seat_rows.errors %}
+                <ul class="errors">
+                    {% for error in form.seat_rows.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="seat_columns" class="form-label">Seat Columns</label>
+            {{ form.seat_columns(class="form-control") }}
+            {% if form.seat_columns.errors %}
+                <ul class="errors">
+                    {% for error in form.seat_columns.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="seats" class="form-label">Seats</label>
+            {{ form.seats(class="form-control") }}
+            {% if form.seats.errors %}
+                <ul class="errors">
+                    {% for error in form.seats.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="language" class="form-label">Language</label>
+            {{ form.language(class="form-control") }}
+            {% if form.language.errors %}
+                <ul class="errors">
+                    {% for error in form.language.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="movie_format" class="form-label">Movie Format</label>
+            {{ form.movie_format(class="form-control") }}
+            {% if form.movie_format.errors %}
+                <ul class="errors">
+                    {% for error in form.movie_format.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="theatre_id" class="form-label">Theatre</label>
+            {{ form.theatre_id(class="form-select") }}
+            {% if form.theatre_id.errors %}
+                <ul class="errors">
+                    {% for error in form.theatre_id.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}

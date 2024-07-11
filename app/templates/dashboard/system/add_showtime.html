@@ -1,0 +1,43 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h1>Showtime Form</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            <label for="movie_id" class="form-label">Movie</label>
+            {{ form.movie_id(class="form-select") }}
+            {% if form.movie_id.errors %}
+                <ul class="errors">
+                    {% for error in form.movie_id.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="start_time" class="form-label">Start Time</label>
+            <input type="datetime-local" class="form-control" id="start_time" name="start_time" required>
+            {% if form.start_time.errors %}
+                <ul class="errors">
+                    {% for error in form.start_time.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="end_time" class="form-label">End Time</label>
+            <input type="datetime-local" class="form-control" id="end_time" name="end_time" required>
+            {% if form.end_time.errors %}
+                <ul class="errors">
+                    {% for error in form.end_time.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Create Showtime</button>
+    </form>
+</div>
+{% endblock %}

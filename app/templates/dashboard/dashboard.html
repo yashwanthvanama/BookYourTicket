@@ -1,0 +1,203 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<style>
+  /* Custom CSS styles for the buttons */
+  .custom-button {
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-decoration: none; /* Remove underlines from links */
+    display: inline-block;
+    background-color: #f8f9fa; /* Off-white background color */
+    border: 1px solid #000; /* Black border */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Drop shadow */
+    color: #000; /* Black text color */
+    transition: transform 0.2s; /* Add a hover effect */
+    height: 100px; /* Fixed height for all buttons */
+    width: 100%; /* Fixed width for all buttons */
+  }
+
+  /* Custom CSS styles for button icons */
+  .custom-icon {
+    font-size: 24px;
+    margin-bottom: 10px; /* Add spacing between icon and text */
+  }
+
+  /* Hover effect: Slightly scale the button on hover */
+  .custom-button:hover {
+    transform: scale(1.05);
+  }
+</style>
+
+  <!-- Theatre Management Subsection -->
+  <section>
+    <h1>Theatre Management</h1>
+    <hr>
+
+    <!-- Movie Management Subsection -->
+    <section>
+      <h3>Movie Management</h3>
+      <div class="container mt-4">
+        <div class="row">
+              <div class="col-md-3">
+                <a href="{{ url_for('add_showtime_admin') }}" class="custom-button">
+                  <i class="fa fa-plus-circle custom-icon"></i><br> Add Showtime
+                </a>
+              </div>
+              <div class="col-md-3">
+                <a href="{{ url_for('list_showtimes_admin') }}" class="custom-button">
+                  <i class="fa fa-film custom-icon"></i><br> List Showtimes
+                </a>
+              </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h3>Bookings Management</h3>
+      <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-3">
+                <a href="{{ url_for('create_booking_admin') }}" class="custom-button">
+                  <i class="fa fa-plus-circle custom-icon"></i><br> Add Booking
+                </a>
+              </div>
+              <div class="col-md-3">
+                <a href="{{ url_for('list_bookings_admin') }}" class="custom-button">
+                  <i class="fa fa-bookmark custom-icon"></i><br> List Bookings
+                </a>
+              </div>
+        </div>
+    </section>
+
+    <section>
+      <h3>Coupon Management</h3>
+      <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-3">
+                <a href="{{ url_for('add_coupon') }}" class="custom-button">
+                  <i class="fa fa-plus-circle custom-icon"></i><br> Add Coupon
+                </a>
+              </div>
+              <div class="col-md-3">
+                <a href="{{ url_for('list_coupons') }}" class="custom-button">
+                  <i class="fa fa-dollar-sign custom-icon"></i><br> List Coupons
+                </a>
+              </div>
+        </div>
+    </section>
+
+    <section>
+      <h3>Staff Management</h3>
+      <div class="container mt-4">
+        <div class="row">
+          <!--
+            <div class="col-md-3">
+                <a href="{{ url_for('add_staff_admin') }}" class="custom-button">
+                  <i class="fa fa-plus-circle custom-icon"></i><br> Add Staff
+                </a>
+              </div>
+              -->
+              <div class="col-md-3">
+                <a href="{{ url_for('list_staff_admin') }}" class="custom-button">
+                  <i class="fa fa-users custom-icon"></i><br> List Staff
+                </a>
+              </div>
+        </div>
+    </section>
+
+    <section>
+      <h3>Theatre Management</h3>
+      <div class="container mt-4">
+        <div class="row">
+              <div class="col-md-3">
+                <a href="{{ url_for('list_theatre_admin') }}" class="custom-button">
+                  <i class="fa fa-building custom-icon"></i><br> List Theatres
+                </a>
+              </div>
+        </div>
+    </section>
+
+    <!-- Analytics Subsection -->
+    <section>
+      <h3>Analytics</h3>
+      <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-3">
+                <a href="{{ url_for('theatre_analytics_admin') }}" class="custom-button">
+                  <i class="fa fa-chart-line custom-icon"></i><br> Theatre Analytics
+                </a>
+              </div>
+        </div>
+      </div>
+    </section>
+
+  </section>
+
+<!-- System Section -->
+<section>
+  <h1>System Management</h1>
+    <hr>
+
+  <section>
+    <h2>Entity Management</h2>
+    <div class="container mt-4">
+      <div class="row">
+        <div class="col-md-3">
+          <a href="{{ url_for('add_user') }}" class="custom-button">
+            <i class="fa fa-plus-circle custom-icon"></i><br> Add User
+          </a>
+        </div>
+        <div class="col-md-3">
+          <a href="{{ url_for('add_movie') }}" class="custom-button">
+            <i class="fa fa-plus-circle custom-icon"></i><br> Add New Movie
+          </a>
+        </div>
+        <div class="col-md-3">
+          <a href="{{ url_for('add_theatre') }}" class="custom-button">
+            <i class="fa fa-plus-circle custom-icon"></i><br> Create New Theatre
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2> Site Moderation and Support </h2>
+    <div class="container mt-4">
+      <div class="row">
+        <div class="col-md-3">
+          <a href="{{ url_for('list_users') }}" class="custom-button">
+            <i class="fa fa-building custom-icon"></i><br> List Users
+          </a>
+        </div>
+        <div class="col-md-3">
+          <a href="https://dashboard.tawk.to/#/dashboard/655a7274d600b968d314ee46" class="custom-button">
+            <i class="fa fa-headset custom-icon"></i><br> Support Tickets
+          </a>
+        </div>
+        <div class="col-md-3">
+          <a href="https://cobrowse.hellomedian.com/" class="custom-button">
+            <i class="fa fa-life-ring custom-icon"></i><br> View Customer Screens
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Global Analytics and Statistics</h2>
+    <div class="container mt-4">
+      <div class="row">
+        <!-- Add Theatres Link -->
+        <div class="col-md-3">
+          <a href="{{ url_for('system_analytics') }}" class="custom-button">
+            <i class="fa fa-building custom-icon"></i><br> System Analytics
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
+{% endblock %}

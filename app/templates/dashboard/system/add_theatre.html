@@ -1,0 +1,54 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h1>Theatre Form</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            <label for="name" class="form-label">Theatre Name</label>
+            {{ form.name(class="form-control") }}
+            {% if form.name.errors %}
+                <ul class="errors">
+                    {% for error in form.name.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="address" class="form-label">Address</label>
+            {{ form.address(class="form-control") }}
+            {% if form.address.errors %}
+                <ul class="errors">
+                    {% for error in form.address.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="owners" class="form-label">Theatre Administrators</label>
+            {{ form.theatre_admins(class="form-select", multiple="multiple") }}
+            {% if form.theatre_admins.errors %}
+                <ul class="errors">
+                    {% for error in form.theatre_admins.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="owners" class="form-label">Theatre Employees</label>
+            {{ form.theatre_employees(class="form-select", multiple="multiple") }}
+            {% if form.theatre_employees.errors %}
+                <ul class="errors">
+                    {% for error in form.theatre_employees.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}

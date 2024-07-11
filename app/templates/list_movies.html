@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block title %}
+Movies
+{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/css/autoComplete.01.min.css">
+
+<style>
+    /* Add your custom CSS styles here */
+    .movie-carousel {
+        padding-bottom: 20px;
+        scroll-behavior: smooth;
+    }
+    .movie-card {
+        display: inline-block;
+        max-width: 400px;
+        margin: 10px;
+        cursor: pointer;
+    }
+
+    .card-body {
+        height: 100%;
+    }
+
+    .card-body {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        whitespace: normal;
+    }
+
+    /* Additional styles */
+    .section {
+        margin-bottom: 50px;
+    }
+
+    .search {
+        justify-content: center;
+    }
+
+
+    .card-body {
+        height: 200px;
+        overflow: auto;
+    }
+
+    .lazy-load {
+        aspect-ratio: auto 400 / 600;
+        width: 400px;
+        height: 592.666666667px;
+    }
+</style>
+
+<!-- Search Bar -->
+<div class="container text-center">
+    <h1 class="title">Find Your Favorite Movies</h1>
+    <p class="subtitle">Search for the latest movies and showtimes</p>
+    <div class="input-group mb-3 search">
+        <input type="text" class="form-control" placeholder="Search for movies..." aria-label="Search" aria-describedby="search-button" id="autoComplete">
+        <button class="btn btn-primary" type="button" id="search-button">Search</button>
+    </div>
+</div>
+
+<!-- Featured Movies Section -->
+<section class="section">
+    <div class="container">
+        <h2>Popular Movies</h2>
+        <div class="movie-carousel">
+            <!-- Movie Cards (repeat as needed) -->
+            {% for movie in movies[:10] %}
+            <div class="movie-card" data-movie-id="{{ movie.id }}">
+                <div class="card">
+                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" data-src="{{ movie.image_url }}" class="card-img-top lazy-load" alt="Movie Poster">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ movie.title }}</h5>
+                        <p class="card-text">{{ movie.description }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/autoComplete.min.js"></script>
+<script>
+    const autoCompleteJS = new autoComplete({
+        placeHolder: "Search for a movie...",
+        data: {
+            src: async (query) => {
+                try {
+                    // Perform an API call to fetch data based on the query
+                    const response = await fetch(`/api/autocomplete/movies/${query}`);
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    return error;
+                }
+            },
+        },
+        resultItem: {
+            highlight: true
+        },
+        events: {
+            input: {
+                selection: (event) => {
+                    const selection = event.detail.selection.value;
+                    autoCompleteJS.input.value = selection;
+                }
+            }
+        }
+    });
+</script>
+
+<!-- Lazy loading -->
+<script>
+// Get all elements with the class "lazy-load"
+const lazyLoadElements = document.querySelectorAll('.lazy-load');
+
+// Create an Intersection Observer
+const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+            const img = entry.target;
+            const src = img.getAttribute('data-src');
+            if (src) {
+                // Set the "src" attribute to load the image
+                img.src = src;
+                img.removeAttribute('data-src'); // Remove the data-src attribute
+                observer.unobserve(img); // Stop observing this element
+            }
+        }
+    });
+});
+
+// Observe each lazy-load element
+lazyLoadElements.forEach((element) => {
+    observer.observe(element);
+});
+
+</script>
+
+<script>
+    // JavaScript for movie cards
+    const movieCards = document.querySelectorAll('.movie-card');
+
+    movieCards.forEach((card) => {
+        card.addEventListener('click', () => {
+            const movieId = card.getAttribute('data-movie-id');
+            window.location.href = `/movie/${movieId}`;
+        });
+    });
+</script>
+
+<script>
+    const movieContainer = document.querySelector('.movie-carousel');
+    let page = 2; // Initial page for loading more movies
+    let isLoading = false; // Track if a request is already in progress
+
+    // Function to fetch and append more movies
+    const loadMoreMovies = async () => {
+        if (isLoading) {
+            return; // Prevent multiple concurrent requests
+        }
+        isLoading = true;
+
+        try {
+            const response = await fetch(`/api/more-movies?page=${page}`);
+            const data = await response.json();
+            
+            // Check if there are more movies to load
+            if (data.length > 0) {
+                data.forEach((movie) => {
+                    // Append the movie card HTML to the container
+                    movieContainer.insertAdjacentHTML('beforeend', `
+                    <div class="movie-card" data-movie-id="${movie.id}">
+                        <div class="card">
+                            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" data-src="${movie.image_url}" class="card-img-top lazy-load" alt="Movie Poster">
+                            <div class="card-body">
+                                <h1 class="card-title">${movie.title}</h5>
+                                <p class="card-text">${movie.description}</p>
+                            </div>
+                        </div>
+                    </div>
+                    `);
+                });
+                const movieCards = document.querySelectorAll('.movie-card');
+
+    movieCards.forEach((card) => {
+        card.addEventListener('click', () => {
+            const movieId = card.getAttribute('data-movie-id');
+            window.location.href = `/movie/${movieId}`;
+        });
+
+        const lazyLoadElements = document.querySelectorAll('.lazy-load');
+        lazyLoadElements.forEach((element) => {
+            observer.observe(element);
+        });
+    });
+                page++; // Increment the page for the next load
+            } else {
+                // No more movies to load, remove the scroll event listener
+                window.removeEventListener('scroll', handleScroll);
+            }
+        } catch (error) {
+            console.error('Error loading more movies:', error);
+        } finally {
+            isLoading = false;
+        }
+    };
+
+    // Function to handle the scroll event
+    const handleScroll = () => {
+        const containerHeight = movieContainer.clientHeight;
+        const scrollHeight = window.scrollY + window.innerHeight;
+
+        // Load more movies when user is close to the bottom
+        if (scrollHeight > containerHeight - 200) {
+            loadMoreMovies();
+        }
+    };
+
+    // Add a scroll event listener to trigger loading more movies
+    window.addEventListener('scroll', handleScroll);
+
+    // Initially load more movies when the page loads
+    loadMoreMovies();
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get the search button element and input element
+        const searchButton = document.getElementById("search-button");
+        const autoCompleteInput = document.getElementById("autoComplete");
+    
+        // Add a click event listener to the search button
+        searchButton.addEventListener("click", function () {
+            // Get the value from the input field
+            const searchTerm = autoCompleteInput.value;
+    
+            // Construct the URL with query parameters
+            const url = `/search?movie_name=${searchTerm}&city=Bloomington, IN&search_radius=4000`;
+    
+            // Redirect to the search route with the query parameter
+            window.location.href = url;
+        });
+    });
+    </script>
+{% endblock %}

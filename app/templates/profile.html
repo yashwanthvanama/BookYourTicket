@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ profile.username }}
+{% endblock %}
+
+{% block content %}
+
+<style>
+  .btn-no-underline {
+    text-decoration: none !important;
+  }
+
+  .movie-card {
+    display: inline-block;
+    margin-right: 10px; /* Adjust spacing as needed */
+}
+
+.carousel-img {
+    max-height: 200px;
+    object-fit: cover;
+}
+
+.card {
+    height: 100%;
+}
+</style>
+
+<div class="container mt-5">
+  <div class="row">
+    <div>
+      <!-- User Information -->
+      <div class="card">
+        <div class="card-body">
+          
+          <h5 class="card-title">User Profile
+            <!-- Edit Profile Button with Tooltip -->
+          {% if profile.id == user.id %}
+            <a
+              href="{{ url_for('edit_profile') }}"
+              class="btn btn-link btn-sm float-end btn-no-underline badge text-muted"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Click here to edit your profile"
+            >
+              <i class="bi bi-info-circle"></i>ⓘ Edit Profile
+            </a>
+          {% endif %}
+            {% if profile.roles %} {% for role in profile.roles %}
+            <span class="badge text-muted float-end">
+            <!-- Check if the user is a superadmin -->
+            {% if role.role == "superadmin" %}
+            &#9; Site Admin
+            <!-- Check if the user is a admin -->
+            {% elif role.role == "admin" %}
+            &#9; Theatre Admin
+            {% elif role.role == "staff" %}
+            &#9; Theatre Employee
+            {% endif %}
+            </span>
+            {% endfor %}
+            <br />
+            {% endif %}
+            
+            </h5>
+            
+          <!-- User's Profile Picture -->
+          <img
+            src="{{ profile.profile_picture }}"
+            class="img-fluid rounded-circle mb-3"
+            alt="User Profile Picture"
+          />
+          <!-- User's Name -->
+          <h6 class="card-subtitle mb-2 text-muted">
+            {{ profile.first_name }} {{ profile.last_name }}
+          </h6>
+          <h6 class="card-subtitle mb-2 text-muted">@{{ profile.username }}</h6>
+          
+          <p class="card-text">
+            {% for genre in profile.get_fav_genres() %}
+            <span class="badge text-muted">{{ genre }}</span>
+            {% endfor %}
+            <!-- Add more genres here -->
+        </p>
+          <!-- User's Biography -->
+          <p class="card-text">
+            {{ profile.bio }}
+          </p>
+          
+        </div>
+      </div>
+    </div>
+      </div>
+<!-- List of Movies Booked -->
+{% if profile.bookings %}
+<div class="card mt-3">
+    <div class="card-body">
+        <h5 class="card-title">Movies Watched</h5>
+        <!-- Movie Gallery Grid -->
+        <div class="container mt-4">
+          {% for booking in profile.bookings %}
+          <div class="card mb-2">
+              <div class="row g-0">
+                  <!-- Movie Poster -->
+                  <div class="col-md-2">
+                      <img src="{{ booking.showtime.movie.image_url }}" alt="Movie Poster" class="img-fluid img-thumbnail" />
+                  </div>
+                  <div class="col-md-10">
+                      <div class="card-body" style="height:100%;">
+                          <!-- Movie Description -->
+                          <h2 class="card-title">{{ booking.showtime.movie.title }}</h2>
+                          <p class="card-text">{{ booking.showtime.movie.description }}</p>
+                          {% if profile.id == user.id %}
+                          <!-- Booked Movie Time -->
+                          <h5 class="card-title">Booked Time</h5>
+                          <p class="card-text">{{ booking.showtime.get_start_time() }}</p>
+                          <a href="{{ url_for('confirmation', bookingId=booking.id) }}" class="btn btn-primary btn-sm">View Receipt</a>
+                          {% endif %}
+                      </div>
+                  </div>
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+  </div>
+</div>
+{% endif %}
+
+<script>
+  var tooltipTriggerList = [].slice.call(
+    document.querySelectorAll('[data-bs-toggle="tooltip"]')
+  );
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+</script>
+{% endblock %}

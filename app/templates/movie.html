@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}{{ movie.title }}{% endblock %}
+{% block content %}
+<style>
+.theatre-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    background-color: #fff;
+    transition: all 0.3s ease-in-out;
+    scroll-behavior: smooth;
+    margin-bottom: 20px;
+
+    &:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+}
+
+.theatre-list {
+    height: 450px;
+    overflow:auto;
+}
+
+.theatre-link {
+    text-decoration: none;
+    color: #000;
+}
+</style>
+<div class="container">
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Movie Information Section -->
+            <div class="col-lg-8">
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="col-md-5">
+                            <img src="{{ movie.image_url }}" class="img-fluid rounded-start" alt="{{ movie.title }}">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ movie.title }}</h5>
+                                <p class="card-text"><strong>Genres:</strong> {{ movie.get_genres_string() }}</p>
+                                <p class="card-text"><strong>Language:</strong> {{ movie.language }}</p>
+                                <p class="card-text"><strong>Format:</strong> {{ movie.movie_format }}</p>
+                                <p class="card-text">{{ movie.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Theatres List Section -->
+            <div class="col-lg-4">
+                <div class="card mb-3 theatre-list">
+                    <div class="row g-0" >
+                        <div class="card-body" >
+                            <h5 class="card-title">Theatres Showing this Movie</h5>
+
+                            <!-- Theatre List -->
+                            {% if movie.get_theatres() %}
+                            {% for theatre in movie.get_theatres() %}
+                            <a href="{{ url_for('view_theatre', theatre_id=theatre.id) }}" class="theatre-link">
+                                <div class="card theatre-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            {{ theatre.name }}
+                                        </h5>
+                                        <p class="card-text">{{ theatre.address }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                            {% endfor %}
+
+                            <!-- No Theatres -->
+                            {% else %}
+                            <p class="card-text">No theatres are showing this movie.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

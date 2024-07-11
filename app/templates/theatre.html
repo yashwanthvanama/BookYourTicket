@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}{{ theatre.name }}{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<style>
+    .card-body {
+        max-height: 575px;
+        overflow-y: auto;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            {% if theatre %}
+                <div class="card">
+                    <!-- Map container at the top of the right-hand card -->
+                    <div id="map" style="height: 400px;"></div>
+                    <div class="card-header">
+                        <h2>
+                        {{ theatre.name }}
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Address:</h5>
+                        <p class="card-text">{{ theatre.address }}</p>
+                        <h5 class="card-title">Description:</h5>
+                        <p class="card-text">{{ theatre.description }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <p>Theatre not found.</p>
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Movies
+                </div>
+                <div class="card-body">
+                    {% if theatre.showtimes %}
+                        {% set movies = theatre.get_movies() %}
+                        {% for movie in movies %}
+                            <div class="card mb-3">
+                                <div class="row no-gutters">
+                                    <div class="col-md-4">
+                                        <!-- Movie Image -->
+                                        <img src="{{ movie.image_url }}" class="card-img" alt="{{ movie.title }}">
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ movie.title }}</h5>
+                                            <p class="card-text">{{ movie.description }}</p>
+                                            <!-- Make the card clickable and link to theatre_showtimes with movie and theatre IDs -->
+                                            <a href="{{ url_for('showtime', movie_id=movie.id, theatre_id=theatre.id) }}" class="btn btn-primary">View Showtimes</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>No future showtimes available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize the map
+    var map = L.map('map').setView([{{ theatre.latitude }}, {{ theatre.longitude }}], 15);
+    
+    // Add OpenStreetMap as a base layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    
+    // Add a marker for the theatre's location
+    L.marker([{{ theatre.latitude }}, {{ theatre.longitude }}]).addTo(map)
+        .bindPopup("{{ theatre.name }}")
+        .openPopup();
+</script>
+{% endblock %}

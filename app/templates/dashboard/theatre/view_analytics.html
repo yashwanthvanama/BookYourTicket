@@ -1,0 +1,22 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Theatre Statistics{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Theatre's All Time Revenue</h1>
+    <div>{{ revenue_chart|safe }}</div>
+    <p>Total Revenue: {{ theatre_revenue }}</p>
+    <!-- Add more content here related to theatre revenue if needed -->
+
+    <h1>Theatre's Movie Statistics</h1>
+    <!-- Loop through genre_counts and display movie genre statistics -->
+    <ul>
+        {% for genre, count in genre_counts.items() %}
+            <li>{{ genre }}: {{ count }}</li>
+        {% endfor %}
+    </ul>
+
+    
+</div>
+{% endblock %}

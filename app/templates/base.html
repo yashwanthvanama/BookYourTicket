@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Experience the magic of cinema with BookYourTicket! Discover the latest movies, showtimes, and secure your seats effortlessly. Your one-stop destination for hassle-free movie bookings and unforgettable entertainment experiences.">
+    <link
+      rel="shortcut icon"
+      href="{{ url_for('static', filename='favicon.png') }}"
+    />
+
+    <!-- Page title -->
+    <title>{% block title %}{% endblock %} - BookYourTicket</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <style>
+      .footer {
+        background-color: #333;
+        color: white;
+        padding: 20px 0;
+        text-align: center;
+      }
+
+      .dropdown-menu {
+        z-index: 1000;
+      }
+
+      /* Add this CSS to your stylesheet */
+      .mobile-nav {
+        display: none;
+      }
+
+      .show-mobile-nav {
+        display: relative;
+      }
+      /* Style the brand and hamburger menu button */
+      .navbar-brand {
+        float: left;
+        padding: 0.5rem 1rem;
+      }
+
+      .navbar-toggler {
+        float: right;
+        margin-right: 15px;
+      }
+
+      .navbar-collapse {
+        display: none;
+      }
+
+      /* Ensure the open menu stays on the right side */
+      @media (max-width: 991.98px) {
+        .show-menu {
+          display: block;
+          position: absolute;
+          right: 0;
+          top: 56px; /* Adjust this value as needed to match your navbar height */
+          width: 300px; /* Set a fixed width for the collapsed navbar */
+          max-width: 100%; /* Allow it to take full width when open */
+          background-color: white; /* Adjust background color as needed */
+          z-index: 9999; /* Ensure it's above other content */
+          transition: 0.1s; /* Disable the transition */
+          border-radius: 0px 0px 0px 32px;
+          padding-bottom: 20px;
+        }
+      }
+    </style>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <header>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('home') }}">BookYourTicket</a>
+
+        <!-- Desktop Navigation -->
+        <ul class="navbar-nav mr-auto d-none d-lg-flex">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('movies') }}">Movies</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('theatres') }}">Theatres</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://bookyourticket.tawk.help/"
+              >Support</a
+            >
+          </li>
+        </ul>
+
+        <!-- Sign In/Join Button (Always Visible) -->
+        <div class="navbar-nav ml-auto d-none d-lg-flex">
+          {% if current_user.is_authenticated %}
+          <div class="dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="userDropdown"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <img
+                src="{{user.profile_picture}}"
+                alt="User Avatar"
+                class="rounded-circle"
+                width="30"
+                height="30"
+              />
+              {{ current_user.username }}
+            </a>
+            <ul
+              class="dropdown-menu dropdown-menu-right"
+              aria-labelledby="userDropdown"
+            >
+              <!-- Check to see if the user is an admin, staff, or superadmin -->
+              {% if current_user.can_access_dashboard() %}
+              <li>
+                <a class="dropdown-item" href="{{ url_for('dashboard') }}"
+                  >Dashboard</a
+                >
+              </li>
+              {% endif %}
+              <li>
+                <a class="dropdown-item" href="{{ url_for('profile') }}"
+                  >Profile</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="{{ url_for('bookings') }}"
+                  >Bookings</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="{{ url_for('settings') }}"
+                  >Settings</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="{{ url_for('logout') }}"
+                  >Log out</a
+                >
+              </li>
+            </div>
+          </div>
+          {% else %}
+            <a class="btn btn-outline-primary" href="{{ url_for('login') }}"
+              >Sign In/Join</a
+            >
+          {% endif %}
+        </ul>
+
+        <!-- Mobile Navigation (Hamburger Menu) -->
+        <div class="d-lg-none">
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle=""
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="navbar-collapse bg-light" id="navbarNav">
+            <ul class="navbar-nav">
+              <!-- Include mobile navigation links here -->
+              <li class="nav-item">
+                <a class="dropdown-item" href="{{ url_for('movies') }}"
+                  >Movies</a
+                >
+              </li>
+
+              <li class="nav-item">
+                <a class="dropdown-item" href="{{ url_for('theatres') }}"
+                  >Theatres</a
+                >
+              </li>
+              <li class="nav-item">
+                <a
+                  class="dropdown-item"
+                  href="https://bookyourticket.tawk.help/"
+                  >Support</a
+                >
+              </li>
+              {% if current_user.is_authenticated %}
+              <hr />
+              <li class="nav-item">
+                <a class="dropdown-item" href="{{ url_for('profile') }}">
+                  <img
+                    src="{{user.profile_picture}}"
+                    alt="User Avatar"
+                    class="rounded-circle"
+                    width="30"
+                    height="30"
+                  />
+                  {{ current_user.username }}
+                </a>
+              </li>
+              {% if current_user.can_access_dashboard() %}
+              <li class="nav-item">
+                <a class="dropdown-item" href="{{ url_for('dashboard') }}"
+                  >Dashboard</a
+                >
+              </li>
+              {% endif %}
+              <li class="nav-item">
+                <a class="dropdown-item" href="{{ url_for('profile') }}"
+                  >Profile</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="dropdown-item" href="{{ url_for('bookings') }}"
+                  >Bookings</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="dropdown-item" href="{{ url_for('settings') }}"
+                  >Settings</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="dropdown-item" href="{{ url_for('logout') }}"
+                  >Log out</a
+                >
+              </li>
+              {% else %}
+              <hr />
+              <li class="nav-item">
+                <a class="dropdown-item" href="{{ url_for('login') }}"
+                  >Sign In/Join</a
+                >
+              </li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <body style="display: flex; flex-direction: column; min-height: 100vh">
+    <!-- Flash messages as toasts in the bottom left hand corner -->
+    <main style="flex-grow: 1">
+      <!-- MAIN CONTENT -->
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2023 BookYourTicket. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Add a container for the toasts -->
+  <div class="position-fixed bottom-0 start-0 p-3" style="z-index: 11">
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+    <!-- Create a toast for each flashed message -->
+    <div
+      class="toast {% if category == 'error' %}bg-light text-danger{% elif category == 'success' %}bg-light text-success{% else %}bg-light{% endif %}"
+      role="alert"
+      style="opacity: 1"
+    >
+      <div class="toast-header">
+        <strong class="me-auto">{{ category }}</strong>
+        <button type="button" class="btn-close" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">{{ message }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Add JavaScript to handle toast behavior -->
+  <script>
+    // Select all toast elements
+    var toasts = document.querySelectorAll(".toast");
+
+    // Delay for removing each toast (in milliseconds)
+    var staggeredDelay = 500; // Adjust as needed
+
+    // Automatically hide and remove toasts after 2 seconds with a staggered delay
+    var delay = 2000;
+    toasts.forEach(function (toast) {
+      setTimeout(function () {
+        // Fade out the toast
+        toast.style.transition = "opacity 0.5s";
+        toast.style.opacity = "0";
+
+        // Remove the toast from the DOM after fading out
+        setTimeout(function () {
+          toast.remove();
+        }, 500); // Wait for the fade-out transition to complete (0.5 seconds)
+      }, delay);
+      delay += staggeredDelay;
+    });
+
+    // Handle toast close button click
+    var closeButtons = document.querySelectorAll(".btn-close");
+    closeButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        var toast = button.closest(".toast");
+
+        // Fade out the toast
+        toast.style.transition = "opacity 0.5s";
+        toast.style.opacity = "0";
+
+        // Remove the toast from the DOM after fading out
+        setTimeout(function () {
+          toast.remove();
+        }, 500); // Wait for the fade-out transition to complete (0.5 seconds)
+      });
+    });
+  </script>
+
+  {% if current_user.is_authenticated %}
+
+  <!--Start of Tawk.to Script-->
+  <script type="text/javascript">
+    var Tawk_API = Tawk_API || {},
+      Tawk_LoadStart = new Date();
+    (function () {
+      var s1 = document.createElement("script"),
+        s0 = document.getElementsByTagName("script")[0];
+      s1.async = true;
+      s1.src = "https://embed.tawk.to/655a7274d600b968d314ee46/1hfkku6hb";
+      s1.charset = "UTF-8";
+      s1.setAttribute("crossorigin", "*");
+      s0.parentNode.insertBefore(s1, s0);
+    })();
+  </script>
+  <!--End of Tawk.to Script-->
+
+  <!-- Median Screen Recording -->
+  <script>
+    !(function () {
+      var e = (window.Median = window.Median || []);
+      if (!e._initialized)
+        if (e._snippet_loaded) console.warn("Median Snippet loaded twice.");
+        else {
+          (e._snippet_loaded = !0),
+            (e._snippet_version = 3),
+            (e.methods = ["init", "identify", "endSession", "on"]),
+            (e.factory = function (n) {
+              return function () {
+                var t = Array.prototype.slice.call(arguments);
+                e.push([n, t]);
+              };
+            });
+          for (var n = 0; n < e.methods.length; n++) {
+            var t = e.methods[n];
+            e[t] = e.factory(t);
+          }
+          var i = document.createElement("script");
+          (i.type = "text/javascript"),
+            (i.async = !0),
+            (i.src =
+              "https://js.hellomedian.com/v1/mdn-cobrowse-screenshare.js");
+          var a = document.getElementsByTagName("script")[0];
+          a.parentNode.insertBefore(i, a);
+        }
+    })();
+    Median.init("42dab7e5-a5a7-42db-8288-9b1589475410");
+  </script>
+
+  {% endif %}
+
+  <!-- Bootstrap JavaScript (place this just before the closing </body> tag in your HTML) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      // When the hamburger menu is clicked, toggle a custom class
+      $(".navbar-toggler").on("click", function () {
+        $(".navbar-collapse").toggleClass("show-menu");
+      });
+    });
+  </script>
+</html>

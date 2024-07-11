@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Bookings{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+    {% for booking in bookings %}
+    <div class="card mb-2">
+        <div class="row g-0">
+            <!-- Movie Poster -->
+            <div class="col-md-2">
+                <img src="{{ booking.showtime.movie.image_url }}" alt="Movie Poster" class="img-fluid img-thumbnail" />
+            </div>
+            <div class="col-md-10">
+                <div class="card-body" style="height:100%;">
+                    <!-- Movie Description -->
+                    <h2 class="card-title">{{ booking.showtime.movie.title }}</h2>
+                    <p class="card-text">{{ booking.showtime.movie.description }}</p>
+                    
+                    <!-- Booked Movie Time -->
+                    <h5 class="card-title">Booked Time</h5>
+                    <p class="card-text">{{ booking.showtime.get_start_time() }}</p>
+                    
+                    <a href="{{ url_for('confirmation', bookingId=booking.id) }}" class="btn btn-primary btn-sm">View Receipt</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    .img-thumbnail {
+        object-fit: cover;
+        max-width: 100%;
+        max-height: 100%;
+    }
+</style>
+
+{% endblock %}

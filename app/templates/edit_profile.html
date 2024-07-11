@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Profile
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <!-- Edit Profile Form -->
+    <div class="card mt-3">
+        <div class="card-body">
+            <h5 class="card-title">Edit Profile</h5>
+            <form method="POST" action="{{ url_for('edit_profile') }}">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.first_name.label(class="form-label") }}
+                    {{ form.first_name(class="form-control") }}
+                    {% if form.first_name.errors %}
+                        <ul class="errors">
+                            {% for error in form.first_name.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    {{ form.last_name.label(class="form-label") }}
+                    {{ form.last_name(class="form-control") }}
+                    {% if form.last_name.errors %}
+                        <ul class="errors">
+                            {% for error in form.last_name.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    {{ form.username.label(class="form-label") }}
+                    <input type="text" class="form-control" value="{{ current_user.username }}" readonly>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"> Email </label>
+                    <input type="text" class="form-control" value="{{ current_user.email }}" readonly>
+                </div>
+                <div class="mb-3">
+                    {{ form.biography.label(class="form-label") }}
+                    {{ form.biography(class="form-control") }}
+                    {% if form.biography.errors %}
+                        <ul class="errors">
+                            {% for error in form.biography.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    {{ form.favorite_genres.label(class="form-label") }}
+                    {{ form.favorite_genres(class="form-select", multiple="multiple") }}
+                    {% if form.favorite_genres.errors %}
+                        <ul class="errors">
+                            {% for error in form.favorite_genres.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    {{ form.submit(class="btn btn-primary", value="Save Changes") }}
+                    <a href="{{ url_for('profile') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

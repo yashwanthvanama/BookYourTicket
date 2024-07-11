@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/css/autoComplete.01.min.css">
+
+<style>
+    /* Add your custom CSS styles here */
+    /* Set background images using Unsplash URLs */
+    .hero-section {
+        background-image: url("{{ url_for('static', filename='images/header.jfif') }}");
+        background-size: cover;
+        background-position: center;
+        height: 600px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 50px;
+    }
+    .carousel-img {
+        max-height: 200px;
+        object-fit: cover;
+    }
+
+    .title {
+        font-size: 3rem;
+        font-weight: bold;
+        color: white;
+    }
+
+    .subtitle {
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .movie-carousel {
+        overflow-x: scroll;
+        white-space: nowrap;
+        padding-bottom: 20px;
+    }
+    .movie-card {
+        display: inline-block;
+        margin-right: 10px; /* Adjust spacing as needed */
+        max-width: 400px;
+        cursor: pointer;
+    }
+
+    /* Additional styles */
+    .section {
+        margin-bottom: 50px;
+    }
+
+    .search {
+        justify-content: center;
+    }
+
+    .search-btn {
+        margin-left: -10px !important;
+    }
+    .card-img-top {
+        width: 400px;
+        height: 600px;
+        object-fit: cover;
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container text-center">
+        <h1 class="title">Find Your Favorite Movies</h1>
+        <p class="subtitle">Search for Movie Theatres Near You</p>
+        <div class="input-group mb-3 search">
+            <input type="text" class="form-control" placeholder="" aria-label="Search" aria-describedby="search-button" id="autoComplete">
+            <button class="btn btn-primary search-btn" type="button" id="search-button">Search</button>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Movies Section -->
+<section class="section">
+    <div class="container">
+        <h2>Featured Movies</h2>
+        <div class="movie-carousel">
+            {% for movie in movies %}
+            <div class="movie-card" data-movie-id="{{ movie.id }}">
+                <div class="card">
+                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" data-src="{{ movie.image_url }}" class="card-img-top lazy-load" alt="Movie Poster" >
+                    <div class="card-body">
+                        <span class="card-title">{{ movie.title }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+    </div>
+    <div class="container mt-3">
+        <button class="btn btn-primary btn-sm" id="prevButton">
+            <i class="bi bi-chevron-left"></i> Previous
+        </button>
+        <button class="btn btn-primary btn-sm" id="nextButton">
+            Next <i class="bi bi-chevron-right"></i>
+        </button>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="section">
+    <div class="container">
+        <h2>Frequently Asked Questions</h2>
+        
+        <!-- FAQ Accordion -->
+        <div id="faqAccordion">
+            <!-- FAQ Item 1 -->
+            <div class="accordion-item">
+                <h3 class="accordion-header" id="faqHeading1">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1" aria-expanded="true" aria-controls="faqCollapse1">
+                        What is BookYourTicket?
+                    </button>
+                </h3>
+                <div id="faqCollapse1" class="accordion-collapse collapse show" aria-labelledby="faqHeading1" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        BookYourTicket is a platform that allows you to discover and book tickets for your favorite movies and shows in nearby theaters. You can search for movies, check showtimes, and reserve your seats online.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 2 -->
+            <div class="accordion-item">
+                <h3 class="accordion-header" id="faqHeading2">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
+                        How can I purchase tickets?
+                    </button>
+                </h3>
+                <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faqHeading2" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        To purchase tickets, simply search for the movie you want to watch, select the showtime, choose your seats, and proceed to checkout. You can pay securely online using various payment methods.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 3 -->
+            <div class="accordion-item">
+                <h3 class="accordion-header" id="faqHeading3">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
+                        Can I cancel or change my booking?
+                    </button>
+                </h3>
+                <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Yes, you can cancel or change your booking depending on the theater's policy. Please check the theater's terms and conditions for details on cancellations and changes.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add more FAQ items as needed -->
+            
+        </div>
+    </div>
+</section>
+
+<script>
+    // JavaScript for horizontal scrolling
+    const movieCarousel = document.querySelector('.movie-carousel');
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+
+    prevButton.addEventListener('click', () => {
+        movieCarousel.scrollTo({
+            left: movieCarousel.scrollLeft - 1000, // Adjust scroll distance as needed
+            behavior: 'smooth' // Add smooth scrolling behavior
+        });
+    });
+
+    nextButton.addEventListener('click', () => {
+        movieCarousel.scrollTo({
+            left: movieCarousel.scrollLeft + 1000, // Adjust scroll distance as needed
+            behavior: 'smooth' // Add smooth scrolling behavior
+        });
+    });
+
+    // Prevent anchor links from scrolling to the top
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/autoComplete.min.js"></script>
+<script>
+    const autoCompleteJS = new autoComplete({
+        placeHolder: "Search for a city...",
+        data: {
+            src: async (query) => {
+                try {
+                    // Perform an API call to fetch data based on the query
+                    const response = await fetch(`/api/autocomplete/city/${query}`);
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    return error;
+                }
+            },
+        },
+        resultItem: {
+            highlight: true
+        },
+        events: {
+            input: {
+                selection: (event) => {
+                    const selection = event.detail.selection.value;
+                    autoCompleteJS.input.value = selection;
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+    // Get references to the search input and search button
+    const searchInput = document.getElementById("autoComplete");
+    const searchButton = document.getElementById("search-button");
+
+    // Function to handle the search
+    function performSearch() {
+        const query = searchInput.value.trim(); // Get the value from the input and remove leading/trailing spaces
+        if (query !== "") {
+            // Redirect to the search page with the query parameter
+            window.location.href = `/search/${encodeURIComponent(query)}`;
+        }
+    }
+
+    // Attach an event listener to the search button
+    searchButton.addEventListener("click", performSearch);
+
+    // Attach an event listener to the search input for Enter key press
+    searchInput.addEventListener("keyup", function (event) {
+        if (event.key === "Enter") {
+            performSearch();
+        }
+    });
+</script>
+
+<!-- Lazy loading -->
+<!-- Lazy loading -->
+<script>
+    // Get all elements with the class "lazy-load"
+    const lazyLoadElements = document.querySelectorAll('.lazy-load');
+    
+    // Create an Intersection Observer with custom options
+    const observerOptions = {
+        root: null, // using the viewport
+        rootMargin: '0px 100px 0px 0px', // values for top, right, bottom, left
+        threshold: 0.01 // 10% of the item must be visible
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                const src = img.getAttribute('data-src');
+                if (src) {
+                    img.src = src;
+                    img.removeAttribute('data-src');
+                    observer.unobserve(img);
+                }
+            }
+        });
+    }, observerOptions);
+    
+    // Observe each lazy-load element
+    lazyLoadElements.forEach((element) => {
+        observer.observe(element);
+    });
+</script>
+
+    
+    <script>
+        // JavaScript for movie cards
+        const movieCards = document.querySelectorAll('.movie-card');
+    
+        movieCards.forEach((card) => {
+            card.addEventListener('click', () => {
+                const movieId = card.getAttribute('data-movie-id');
+                window.location.href = `/movie/${movieId}`;
+            });
+        });
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Get the search button element and input element
+                const searchButton = document.getElementById("search-button");
+                const autoCompleteInput = document.getElementById("autoComplete");
+            
+                // Add a click event listener to the search button
+                searchButton.addEventListener("click", function () {
+                    // Get the value from the input field
+                    const searchTerm = autoCompleteInput.value;
+            
+                    // Construct the URL with query parameters
+                    const url = `/search?city=${searchTerm}&search_radius=4000`;
+            
+                    // Redirect to the search route with the query parameter
+                    window.location.href = url;
+                });
+            });
+            </script>
+{% endblock %}

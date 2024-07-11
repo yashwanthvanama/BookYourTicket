@@ -1,0 +1,9 @@
+SECRET_KEY = 'your_secret_key'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///site.db'
+
+
+AUTH0_CLIENT_ID="6ImXula2gfeFi2K3ytRQBk6Ku786hFzg"
+AUTH0_CLIENT_SECRET="yWxJoDa5jV4cUR1FcVeUCerlGIWTwbl7ze-39Iy1vXoK6mTZp9gXt1_qKDOaWY4K"
+AUTH0_DOMAIN="calloway.us.auth0.com"
+
+GOOGLE_MAPS_API_KEY="AIzaSyCIqyrCnQWMDS3nTV7YmLuATBCB0gBfvVw"

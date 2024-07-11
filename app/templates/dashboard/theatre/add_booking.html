@@ -1,0 +1,87 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h1>Booking Form</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            <label for="seats" class="form-label">Seats (comma-separated)</label>
+            {{ form.seats(class="form-control") }}
+            {% if form.seats.errors %}
+                <ul class="errors">
+                    {% for error in form.seats.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="amount_paid" class="form-label">Amount Paid</label>
+            {{ form.amount_paid(class="form-control") }}
+            {% if form.amount_paid.errors %}
+                <ul class="errors">
+                    {% for error in form.amount_paid.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="booking_fee" class="form-label">Booking Fee</label>
+            {{ form.booking_fee(class="form-control") }}
+            {% if form.booking_fee.errors %}
+                <ul class="errors">
+                    {% for error in form.booking_fee.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="transaction_id" class="form-label">Transaction ID</label>
+            {{ form.transaction_id(class="form-control") }}
+            {% if form.transaction_id.errors %}
+                <ul class="errors">
+                    {% for error in form.transaction_id.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="user_id" class="form-label">User</label>
+            {{ form.user_id(class="form-select") }}
+            {% if form.user_id.errors %}
+                <ul class="errors">
+                    {% for error in form.user_id.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="movie_id" class="form-label">Movie</label>
+            {{ form.movie_id(class="form-select") }}
+            {% if form.movie_id.errors %}
+                <ul class="errors">
+                    {% for error in form.movie_id.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="showtime_id" class="form-label">Showtime</label>
+            {{ form.showtime_id(class="form-select") }}
+            {% if form.showtime_id.errors %}
+                <ul class="errors">
+                    {% for error in form.showtime_id.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Create Booking</button>
+    </form>
+</div>
+{% endblock %}

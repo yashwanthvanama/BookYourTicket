@@ -1,0 +1,42 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h1>showtime List</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Duration</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for theatre in showtimes %}
+            {% for showtime in theatre %}
+            <tr>
+                <td>{{ showtime.movie.title }}</td>
+                <td>{{ showtime.theatre.address }}</td>
+                <td>{{ showtime.start_time }}</td>
+                <td>{{ showtime.end_time }}</td>
+                <td>{{ showtime.get_duration() }}</td>
+                <td>{{ showtime.price }}</td>
+                <td>
+                    <a href="{{ url_for('view_theatre', theatre_id=showtime.theatre.id) }}" class="btn btn-primary">View</a>
+                    <a href="{{ url_for('edit_showtime', showtime_id=showtime.id) }}" class="btn btn-warning">Edit</a>
+                    <a href="{{ url_for('delete_showtime', showtime_id=showtime.id) }}" class="btn btn-danger"
+                       onclick="return confirm('Are you sure you want to delete this showtime?')">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

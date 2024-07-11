@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+  whoami:
+    image: callowaysutton/p565:release
+    networks:
+      - caddy
+    labels:
+      caddy: booking.iu.run
+      caddy.reverse_proxy: "{{upstreams 80}}"
+
+networks:
+  caddy:
+    external: true

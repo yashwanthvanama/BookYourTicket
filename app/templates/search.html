@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+<!-- Add Leaflet CSS and JavaScript -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<style>
+
+    .list-group-item {
+        cursor: pointer;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Search Movies</h1>
+            <form action="{{ url_for('search') }}" method="GET">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="movie_name" class="form-label">Movie Name</label>
+                        <input type="text" class="form-control" id="movie_name" name="movie_name" value="{{ movie_name }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="city" class="form-label">City</label>
+                        <input type="text" class="form-control" id="city" name="city" value="{{ city }}">
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label for="search_radius" class="form-label">Search Radius</label>
+                        <input type="number" class="form-control" id="search_radius" name="search_radius" value="{{ search_radius }}">
+                    </div>
+                    <div class="col-md-2 mb-3 align-self-end">
+                        <button type="submit" class="btn btn-primary btn-block">Search</button>
+                    </div>
+                </div>
+                <!-- Hidden input fields for lat and lon -->
+                <input type="hidden" id="lat" name="lat" value="{{ lat }}">
+                <input type="hidden" id="lon" name="lon" value="{{ lon }}">
+            </form>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h2>Map</h2>
+            <div id="map" style="height: 300px;"></div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h2>Results</h2>
+            <p>Number of results: {{ results|length }}</p>
+            <ul class="list-group">
+                {% for movie in results %}
+                    <li class="list-group-item" data-movie-id="{{ movie.id }}">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <img src="{{ movie.image_url }}" alt="{{ movie.title }}" class="img-fluid">
+                            </div>
+                            <div class="col-md-9">
+                                <h3>{{ movie.title }}</h3>
+                                <p>{{ movie.description }}</p>
+                                <p>Genres: {{ movie.genres }}</p>
+                                <p>Showtimes: {% for showtime in movie.showtimes %} {{ showtime.get_start_time().strftime('%B %d at %I:%M%p') }}, {% endfor %}</p>
+                                <p>Language: {{ movie.language }}</p>
+                                <p>Movie Format: {{ movie.movie_format }}</p>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    var lat = {{ lat }};
+    var lon = {{ lon }};
+    var searchRadiusKm = {{ search_radius }};
+    var searchRadiusMeters = searchRadiusKm * 1000;
+    var map = L.map('map').setView([lat, lon], 12); // Initial zoom level adjusted
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Function to update lat and lon fields in the URL
+    function updateURLParams(latlng) {
+        var searchParams = new URLSearchParams(window.location.search);
+        searchParams.set('lat', latlng.lat.toFixed(6));
+        searchParams.set('lon', latlng.lng.toFixed(6));
+
+        // Replace the current URL with the updated parameters
+        window.history.replaceState({}, '', '?' + searchParams.toString());
+    }
+
+    // Function to update hidden form fields
+    function updateHiddenFormFields(latlng) {
+        document.getElementById('lat').value = latlng.lat.toFixed(6);
+        document.getElementById('lon').value = latlng.lng.toFixed(6);
+    }
+
+    // Function to update the search radius
+    function updateSearchRadius(radiusKm) {
+        document.getElementById('search_radius').value = radiusKm;
+    }
+
+    // Event handler for map click
+    map.on('click', function (e) {
+        if (marker) {
+            map.removeLayer(marker);
+        }
+
+        marker = L.marker(e.latlng).addTo(map);
+        updateURLParams(e.latlng);
+        updateHiddenFormFields(e.latlng);
+    });
+
+    // Add a circle to represent the search radius
+    var circle = L.circle([lat, lon], {
+        color: 'blue',
+        fillColor: 'blue',
+        fillOpacity: 0.2,
+        radius: searchRadiusMeters
+    }).addTo(map);
+</script>
+
+<script>
+    // JavaScript for theatre cards
+    const movieCards = document.querySelectorAll('.list-group-item');
+
+    movieCards.forEach((card) => {
+        card.addEventListener('click', () => {
+            const movieId = card.getAttribute('data-movie-id');
+            window.location.href = `/movie/${movieId}`;
+        });
+    });
+</script>
+{% endblock %}

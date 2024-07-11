@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block title %}
+Payment
+{% endblock %}
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/payment-style.css') }}" class="css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<div class="container mt-5">
+  <div class="payment-container">
+    <div class = "payments">
+        <div class = "details-container">
+            <div class = "details-body">
+              <form>
+                <div class="row no-gutters">
+                  <h4><b>Booking details will be sent to : </b></h4>
+                </div>
+                <div class="row no-gutters">
+                  <div class="col-md-4">
+                    <input class="form-control" type="email" id="email" name="email" placeholder = "email@example.com" required value="{{ con_email }}">
+                  </div>
+                  <div class="col-md-4">
+                    <input class="form-control"  type="tel" id="number" name="number" placeholder = "(XXX) XXX-XXXX" >
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+      <form id="payment-form">
+        <div id="payment-message" class="d-none"></div>
+        <div id="payment-element">
+          <!--Stripe.js injects the Payment Element-->
+        </div>
+        <button id="submit">
+          <div class="spinner d-none" id="spinner"></div>
+          <span id="button-text" class="_button">Pay now</span>
+        </button>
+      </form>
+    </div>
+    <div class="order-details">
+      <h2><b>Order Summary</b></h2>
+      <ul class = "_details">
+        <li class = "event">
+          <div>
+            <h3>{{movie.title}}</h3>
+            <address>{{movie.language}}, {{movie.movie_format}}</address>
+            <address>{{theatre.name}}</address>
+            <span>seats : {{seats}}</span>
+            <br>
+            <span class="_date">
+              {{showtime.start_time}}
+            </span>
+          </div>
+          <div>
+            <span class="_no-of-tickets">
+              <b>{{no_of_tickets}}</b>
+              <br>
+              Tickets
+            </span>
+          </div>
+        </li>
+        <li class="_sub-total-section">
+          <div>
+            <p>
+              <span>Sub Total</span>
+            </p>
+          </div>
+          <div>
+            <span class="_sub-total">USD. {{sub_total}}</span>
+          </div>
+        </li>
+        <li id="promotion-link" class="d-none _sub-total-section">
+          <div>
+            <p>
+              <span>
+                <a id="promotions" class = "promotions-link" onclick="showPromotions()"> -Promotions</a>
+              </span>
+            </p>
+          </div>
+        </li>
+        <li id = "promotions-container" class="d-none _promotion-section">
+          <div>
+            <p id="promotion-name" class="promotion-name">
+              name
+            </p>
+          </div>
+          <div>
+            <span id="promotion-value" class="_promotion-value">value</span>
+          </div>
+        </li>
+        <li>
+          <div>
+            <p>
+              <span>Booking Fee</span>
+            </p>
+          </div>
+          <div>
+            <span>USD. {{booking_fee}}</span>
+          </div>
+        </li>
+        <li class = "_total-section">
+          <div class="block">
+            <div>Amount Payable</div>
+            <div>
+              <span id="total_amount"><b>USD. {{total_amount}}</b></span>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+    <!-- Modal -->
+    <div id="modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Login/Signup to claim offers!</h5>
+            </div>
+            <div class="modal-body">
+              <div>
+                <h4>
+                  FIRSTTIME
+                </h4>
+              </div>
+              <div>
+                <P>
+                  Use code "FIRSTTIME" to claim a discount of 15% on your first booking by signing up now.
+                </P>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModal()">Close</button>
+              <button type="button" id = "Signup" class="btn btn-primary">Signup / Login</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="promotionsModal" tabindex="-1" role="dialog" aria-labelledby="promotionsModal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Available Promotions</h5>
+          </div>
+          <div class="modal-body">
+            {% if coupons %}
+            <ui id="coupons_list">
+              {% for coupon in coupons %}
+                <li>
+                    <input type="checkbox" id = "{{coupon.id}}" name="{{ coupon.code }}" value="{{ coupon.discount }}" class="couponCheckbox" onchange="disableCheckboxes(this)">
+                    <label for="promo1">{{coupon.code}}</label>
+                  <div>
+                    <P>
+                      Use code "{{coupon.code}}" to claim a discount of {{coupon.discount}}% on your booking.
+                    </P>
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <p>No coupons available.</p>
+            {% endif %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModal()">Close</button>
+            <button type="button" id = "apply" class="btn btn-primary">Apply</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  <script type = "text/javascript">
+    var current_username = "{{user.username}}"
+    var sub_total = Number("{{sub_total}}")
+    var total = Number("{{total_amount}}")
+    var booking_fee = Number("{{booking_fee}}")
+    var booking_id = "{{booking_id}}"
+  </script>
+  <script src="{{ url_for('static', filename='js/payment.js') }}"></script>
+</div>
+{% endblock %}

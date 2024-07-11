@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .content {
+        flex-grow: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid" style="width=100%">
+        <a class="navbar-brand" href="{{ url_for('dashboard') }}"
+          >BookYourTicket Dashboard</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse ml-auto" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                aria-current="page"
+                href="{{ url_for('dashboard') }}"
+                >Dashboard Home</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                aria-current="page"
+                href="{{ url_for('home') }}"
+                >Exit Dashboard</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4 content">
+      {% if current_user.can_access_dashboard() %} {% block content %} {%
+      endblock %} {% else %}
+      <div class="alert alert-danger" role="alert">
+        You do not have access to the dashboard.
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light text-center py-3">
+      © 2023 BookYourTicket
+    </footer>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Add a container for the toasts -->
+    <div class="position-fixed bottom-0 start-0 p-3" style="z-index: 11">
+      {% for category, message in get_flashed_messages(with_categories=true) %}
+      <!-- Create a toast for each flashed message -->
+      <div
+        class="toast {% if category == 'error' %}bg-light text-danger{% elif category == 'success' %}bg-light text-success{% else %}bg-light{% endif %}"
+        role="alert"
+        style="opacity: 1"
+      >
+        <div class="toast-header">
+          <strong class="me-auto">{{ category }}</strong>
+          <button type="button" class="btn-close" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">{{ message }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Add JavaScript to handle toast behavior -->
+    <script>
+      // Select all toast elements
+      var toasts = document.querySelectorAll(".toast");
+
+      // Delay for removing each toast (in milliseconds)
+      var staggeredDelay = 500; // Adjust as needed
+
+      // Automatically hide and remove toasts after 2 seconds with a staggered delay
+      var delay = 2000;
+      toasts.forEach(function (toast) {
+        setTimeout(function () {
+          // Fade out the toast
+          toast.style.transition = "opacity 0.5s";
+          toast.style.opacity = "0";
+
+          // Remove the toast from the DOM after fading out
+          setTimeout(function () {
+            toast.remove();
+          }, 500); // Wait for the fade-out transition to complete (0.5 seconds)
+        }, delay);
+        delay += staggeredDelay;
+      });
+
+      // Handle toast close button click
+      var closeButtons = document.querySelectorAll(".btn-close");
+      closeButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          var toast = button.closest(".toast");
+
+          // Fade out the toast
+          toast.style.transition = "opacity 0.5s";
+          toast.style.opacity = "0";
+
+          // Remove the toast from the DOM after fading out
+          setTimeout(function () {
+            toast.remove();
+          }, 500); // Wait for the fade-out transition to complete (0.5 seconds)
+        });
+      });
+    </script>
+
+    <!-- Median Screen Recording -->
+    <script>
+      !(function () {
+        var e = (window.Median = window.Median || []);
+        if (!e._initialized)
+          if (e._snippet_loaded) console.warn("Median Snippet loaded twice.");
+          else {
+            (e._snippet_loaded = !0),
+              (e._snippet_version = 3),
+              (e.methods = ["init", "identify", "endSession", "on"]),
+              (e.factory = function (n) {
+                return function () {
+                  var t = Array.prototype.slice.call(arguments);
+                  e.push([n, t]);
+                };
+              });
+            for (var n = 0; n < e.methods.length; n++) {
+              var t = e.methods[n];
+              e[t] = e.factory(t);
+            }
+            var i = document.createElement("script");
+            (i.type = "text/javascript"),
+              (i.async = !0),
+              (i.src =
+                "https://js.hellomedian.com/v1/mdn-cobrowse-screenshare.js");
+            var a = document.getElementsByTagName("script")[0];
+            a.parentNode.insertBefore(i, a);
+          }
+      })();
+      Median.init("42dab7e5-a5a7-42db-8288-9b1589475410");
+    </script>
+  </body>
+</html>

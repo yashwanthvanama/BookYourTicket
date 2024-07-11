@@ -1,0 +1,43 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h1>Coupon Form</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            <label for="code" class="form-label">Coupon Code</label>
+            {{ form.code(class="form-control") }}
+            {% if form.code.errors %}
+                <ul class="errors">
+                    {% for error in form.code.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="discount" class="form-label">Discount</label>
+            {{ form.discount(class="form-control") }}
+            {% if form.discount.errors %}
+                <ul class="errors">
+                    {% for error in form.discount.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="movie_id" class="form-label">Movie</label>
+            {{ form.movie_id(class="form-select") }}
+            {% if form.movie_id.errors %}
+                <ul class="errors">
+                    {% for error in form.movie_id.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Create Coupon</button>
+    </form>
+</div>
+{% endblock %}

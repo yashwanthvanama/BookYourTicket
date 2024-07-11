@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}
+Theatres
+{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/css/autoComplete.01.min.css">
+
+<style>
+    /* Add your custom CSS styles here */
+    .movie-carousel {
+        overflow-x: auto;
+        padding-bottom: 20px;
+    }
+    .theatre-card {
+        display: inline-block;
+        margin-right: 10px; /* Adjust spacing as needed */
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+
+    /* Additional styles */
+    .section {
+        margin-bottom: 50px;
+    }
+
+    .search {
+        justify-content: center;
+    }
+
+    .card-img-top {
+        height: 600px;
+        width: 400px;
+        object-fit: cover;
+    }
+</style>
+
+<!-- Search Bar -->
+<div class="container text-center">
+    <h1 class="title">Find Theatres Near You</h1>
+    <p class="subtitle">Watch the latest movies at theatres near you</p>
+    <div class="input-group mb-3 search">
+        <input type="text" class="form-control" placeholder="Search for theatres..." aria-label="Search" aria-describedby="search-button" id="autoComplete">
+        <button class="btn btn-primary" type="button" id="search-button">Search</button>
+    </div>    
+</div>
+
+<!-- List of theatres section -->
+<section class="section">
+    <div class="container">
+        <h2>Theatres</h2>
+        <div class="movie-carousel">
+            {% for theatre in theatres %}
+            <div class="theatre-card" data-theatre-id="{{ theatre.id }}">
+                <div class="card">
+                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" data-src="https://picsum.photos/400/600" class="card-img-top lazy-load" alt="Theatre Poster" >
+                    <div class="card-body">
+                        <h5 class="card-title">{{ theatre.name }}</h5>
+                        <p class="card-text">{{ theatre.address }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/autoComplete.min.js"></script>
+<script>
+    const autoCompleteJS = new autoComplete({
+        placeHolder: "Search for your city...",
+        data: {
+            src: async (query) => {
+                try {
+                    // Perform an API call to fetch data based on the query
+                    const response = await fetch(`/api/autocomplete/city/${query}`);
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    return error;
+                }
+            },
+        },
+        resultItem: {
+            highlight: true
+        },
+        events: {
+            input: {
+                selection: (event) => {
+                    const selection = event.detail.selection.value;
+                    autoCompleteJS.input.value = selection;
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+    // JavaScript for theatre cards
+    const movieCards = document.querySelectorAll('.theatre-card');
+
+    movieCards.forEach((card) => {
+        card.addEventListener('click', () => {
+            const movieId = card.getAttribute('data-theatre-id');
+            window.location.href = `/theatre/${movieId}`;
+        });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get the search button element and input element
+        const searchButton = document.getElementById("search-button");
+        const autoCompleteInput = document.getElementById("autoComplete");
+    
+        // Add a click event listener to the search button
+        searchButton.addEventListener("click", function () {
+            // Get the value from the input field
+            const searchTerm = autoCompleteInput.value;
+    
+            // Construct the URL with query parameters
+            const url = `/search?city=${searchTerm}`;
+    
+            // Redirect to the search route with the query parameter
+            window.location.href = url;
+        });
+    });
+    </script>
+    
+    <!-- Lazy loading -->
+<script>
+    // Get all elements with the class "lazy-load"
+    const lazyLoadElements = document.querySelectorAll('.lazy-load');
+    
+    // Create an Intersection Observer
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              const img = entry.target;
+              const src = img.getAttribute('data-src');
+              if (src) {
+                img.src = src;
+                img.removeAttribute('data-src'); // Remove the data-src attribute
+                observer.unobserve(img); // Stop observing this element
+              }
+            }, index * 500); // Delay each iteration by 1 second (1000 milliseconds)
+          }
+        });
+      });
+      
+    
+    // Observe each lazy-load element
+    lazyLoadElements.forEach((element) => {
+        observer.observe(element);
+    });
+    
+    </script>
+{% endblock %}

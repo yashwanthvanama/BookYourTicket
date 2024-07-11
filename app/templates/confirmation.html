@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Confirmation{% endblock %}
+{% block content %}
+
+<div class="container">
+  <div class="container mt-4">
+      <div class="row">
+          <!-- Movie Poster (Left) -->
+          <div class="col-md-3">
+            <div class="card mb-3">
+              <div class="card-body">
+                <img src="{{ movie.image_url }}" alt="Movie Poster" class="img-fluid">
+                <div class="mt-2">
+                  <h3>{{ movie.title }}</h3>
+                  <p>{{ movie.description }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Movie Booking Details (Middle) -->
+          <div class="col-md-5">
+              <div class="card mb-3">
+                  <div class="card-body">
+                      <h2>{{ theatre.name }}</h2>
+                      <p>Genres: {{ movie.get_genres_string() }}</p>
+                      <p>Format: {{ movie.movie_format }}</p>
+                      <p>Seats: {{ seats }}</p>
+
+                      <!-- Add booking form or details here -->
+                      <hr />
+                      <h3>Booking Details</h3>
+                      <p>Sub Total: USD {{ sub_total }}</p>
+                      <p>Booking Fee: USD {{ booking_fee }}</p>
+                      {% if discount != 0 %}
+                          <p>Promotion: {{ coupon.code }}</p>
+                          <p>Discount: USD {{ discount }}</p>
+                      {% endif %}
+                      <p>Amount Paid: USD {{ total_amount }}</p>
+                  </div>
+              </div>
+          </div>
+
+          <!-- QR Code and Text (Right) -->
+        <div class="col-md-4">
+          <div class="card mb-3">
+              <div class="card-body d-flex flex-column align-items-center">
+                  <img src="{{ qr_code }}" alt="QR Code" class="img-fluid">
+                  <p class="mt-2 text-center">{{ url_for('confirmation', bookingId=bookingId) | base64_encode }}</p>
+              </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+{% endblock %}

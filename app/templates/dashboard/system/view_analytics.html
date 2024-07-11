@@ -1,0 +1,79 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Analytics Dashboard</h1>
+
+    <!-- Movie Genres Statistics -->
+<div class="card mt-4">
+    <div class="card-header">
+        Movie Genres Statistics
+    </div>
+    <div class="card-body">
+        <p>Most Popular Genres:</p>
+        <!-- Include the Plotly chart -->
+        <div id="genre-chart">
+            {{ genre_chart | safe }}
+        </div>
+        <ul>
+            {% for genre, count in popular_genres.items() %}
+                <li>{{ genre }}: {{ count }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+
+    <!-- User Statistics -->
+    <div class="card mt-4">
+        <div class="card-header">
+            User Statistics
+        </div>
+        <div class="card-body">
+            <p>Total Users: {{ total_users }}</p>
+            <p>Total Admins: {{ total_admins }}</p>
+            <p>Total Staff: {{ total_staff }}</p>
+            <p>Total Banned Users: {{ total_banned }}</p>
+        </div>
+    </div>
+
+    <!-- Theatre Statistics -->
+    <div class="card mt-4">
+        <div class="card-header">
+            Theatre Statistics
+        </div>
+        <div class="card-body">
+            <p>Total Theatres: {{ total_theatres }}</p>
+            <p>Total Showtimes: {{ total_showtimes }}</p>
+            <p>Total Movies: {{ total_movies }}</p>
+        </div>
+    </div>
+
+    <!-- Movie Genres Statistics -->
+    <div class="card mt-4">
+        <div class="card-header">
+            Movie Genres Statistics
+        </div>
+        <div class="card-body">
+            <p>Most Popular Genres:</p>
+            <ul>
+                {% for genre, count in popular_genres.items() %}
+                    <li>{{ genre }}: {{ count }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Showtime Statistics -->
+    <div class="card mt-4">
+        <div class="card-header">
+            Showtime Statistics
+        </div>
+        <div class="card-body">
+            <p>Average Showtime Price: ${{ avg_showtime_price }}</p>
+            <p>Minimum Showtime Price: ${{ min_showtime_price }}</p>
+            <p>Maximum Showtime Price: ${{ max_showtime_price }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

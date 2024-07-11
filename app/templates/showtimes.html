@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+
+{% block title %}{{ movie.title }}{% endblock %}
+
+{% block content %}
+
+<style>
+    .showtime-card {
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        background-color: #fff;
+        transition: all 0.3s ease-in-out;
+        scroll-behavior: smooth;
+        margin: 10px;
+    
+        &:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+    }
+
+
+.theatre-link {
+    text-decoration: none;
+    color: #000;
+}
+.modal-dialog-centered {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    min-height: calc(100% - (0.5rem * 2));
+  }
+  
+  .modal-header {
+    justify-content: center;
+  }
+  
+  
+  .modal-dialog {
+    position: relative;
+    width: auto;
+    pointer-events: none;
+  }
+  
+  .modal-content {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    width: 100%;
+    pointer-events: auto;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.2);
+    border-radius: 0.3rem;
+    outline: 0;
+  }
+  
+  .modal-body {
+    position: relative;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 1rem;
+    font-size: medium;
+  }
+  
+  .modal-footer {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+    padding: 1rem;
+    border-top: 1px solid #e9ecef;
+  }
+  
+  .close:not(:disabled):not(.disabled) {
+    cursor: pointer;
+  }
+  
+  .modal-header .close {
+    padding: 1rem;
+    margin: -1rem -1rem -1rem auto;
+  }
+  
+  button.close {
+    padding: 0;
+    background-color: transparent;
+    border: 0;
+    -webkit-appearance: none;
+    width: auto;
+  }
+  
+  
+  .modal-footer>:not(:last-child) {
+    margin-right: 0.25rem;
+  }
+
+  .seatChartContainer {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .seat-row {
+    display: flex;
+  }
+
+  .seat {
+    color: white;
+    background-color: #277da1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    width: 42px;
+    margin: 4px;
+    box-sizing: border-box;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    user-select: none;
+    transition: opacity 0.1s ease-in-out;
+    cursor: pointer;
+  }
+
+  .unavailable {
+    color: white;
+    background-color: #d2d2d2;
+    cursor: not-allowed;
+  }
+
+  .selected {
+    cursor: pointer;
+    opacity: 0.7;
+  }
+
+  .screen {
+    display: flex;
+    justify-content: center;
+    color: #b0b0b0;
+    border-radius: 3px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    background-color: #f5f5f5;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+</style>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <img src="{{ movie.image_url }}" class="card-img-top" alt="{{ movie.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ movie.title }}</h5>
+                    <p class="card-text">{{ movie.description }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ theatre.name }}</h5>
+                    <p class="card-text">{{ theatre.address }}</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Showtimes:</strong></li>
+                    {% for showtime in movie.showtimes %}
+                        {% if showtime.theatre_id == theatre.id %}
+                        {% set showtime_data = {
+                            'seat_rows': showtime.seat_rows,
+                            'seat_columns': showtime.seat_columns,
+                            'id': showtime.id,
+                            'seats_taken': showtime.seats_taken
+                        } %}
+                        <a href="#" class="theatre-link" onclick="openModal({{showtime_data}})">
+                            <div class="card showtime-card">
+                                <div class="card-body">
+                                    <h5 class="card-title"> {{ showtime.get_start_time().strftime('%B %d at %I:%M%p') }} </h5>
+                                    <p class="card-text">${{ showtime.price }} | Duration: {{ showtime.get_duration() }}</p>
+                                </div>
+                            </div>
+                        </a>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="promotionsModal" tabindex="-1" role="dialog" aria-labelledby="promotionsModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Select Your Seats</h5>
+            </div>
+            <div class="modal-body">
+                <div class = "screen"> Screen </div>
+                <br>
+                <br>
+                <div id="seatChartContainer"></div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModal()">Close</button>
+              <button type="button" id = "apply" class="btn btn-primary" onclick="checkout()">Checkout</button>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+<script>
+    const modalOverlay = document.getElementById('modalOverlay');
+    const seatModal = document.getElementById('seatModal');
+    const seatsSelected = [];
+    var showTimeId = '';
+  
+    function openModal(showtimeData) {
+        showTimeId = showTimeId + showtimeData.id;
+        const seatChartContainer = document.getElementById('seatChartContainer');
+        seatChartContainer.innerHTML = '';
+        for (let row = 1; row <= showtimeData.seat_rows; row++) {
+            const seatRow = document.createElement('div')
+            seatRow.className = "seat-row";
+      for (let col = 1; col <= showtimeData.seat_columns; col++) {
+        const seat = document.createElement('div');
+        seat.className = 'seat';
+        seat.addEventListener('click', (event) => {
+            console.log(event.target.value);
+            console.log(seatsSelected);
+            if(seatsSelected.includes(event.target.value)) {
+                event.target.classList.remove("selected");
+                const index = seatsSelected.indexOf(event.target.value);
+                seatsSelected.splice(index, 1);
+            }
+            else{
+                event.target.classList.add("selected");
+                seatsSelected.push(event.target.value);
+            }
+        });
+        const currentSeat = `${mapIntegerToAlphabet(row)}${col}`;
+        seat.textContent = currentSeat;
+        seat.value = currentSeat;
+        if(showtimeData.seats_taken.search(currentSeat) != -1) {
+            seat.classList.add("unavailable");
+        }
+        seatRow.appendChild(seat);
+
+      }
+      seatChartContainer.appendChild(seatRow);
+      seatChartContainer.appendChild(document.createElement('br'));
+    }
+        $('#promotionsModal').modal('show');
+    }
+  
+    function closeModal() {
+        $('#promotionsModal').modal('hide');
+    }
+
+    function mapIntegerToAlphabet(integer) {
+        if (Number.isInteger(integer) && integer > 0) {
+            return String.fromCharCode('A'.charCodeAt(0) + integer - 1);
+        } else {
+            return null;
+        }
+    }
+
+    function checkout() {
+        if(seatsSelected.length == 0) {
+            alert("Please select seats to proceed further");
+        }
+        else {
+            var seats = '';
+            for(let i=0; i < seatsSelected.length - 1; i++) {
+                seats = seats + seatsSelected[i] + ',';
+            }
+            seats = seats + seatsSelected[seatsSelected.length - 1]
+            window.location.href = '/payment/' + showTimeId + '/' + seats;
+        }
+    }
+  </script>
+{% endblock %}
